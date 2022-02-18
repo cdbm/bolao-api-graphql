@@ -12,10 +12,103 @@ datasource db {
 }
 
 model User {
-  id        String   @id @default(uuid())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  name      String
-  email     String   @unique
-  password  String
+  id                 String         @id @default(uuid())
+  createdAt          DateTime       @default(now())
+  updatedAt          DateTime       @updatedAt
+  name               String
+  email              String         @unique
+  password           String
+  friendLeagues      FriendLeague[]
+  FriendLeaguesOwned FriendLeague[] @relation("owner")
+  Performance        Performance[]
+}
+
+model Player {
+  id     String @id @default(uuid())
+  nick   String
+  name   String
+  role   String
+  team   Team   @relation(name: "players", fields: [teamId], references: [id])
+  teamId String
+}
+
+model Team {
+  id       String   @id @default(uuid())
+  name     String
+  server   String
+  league   League   @relation(name: "teams", fields: [leagueId], references: [id])
+  leagueId String
+  players  Player[] @relation("players")
+  Season   Season?  @relation(fields: [seasonId], references: [id])
+  seasonId String?
+  homeGame Game[]   @relation("homeTeam")
+  awayGame Game[]   @relation("awayTeam")
+  wins     Game[]   @relation("winner")
+  guesses  Guess[]
+}
+
+model League {
+  id      String   @id @default(uuid())
+  name    String
+  server  String
+  teams   Team[]   @relation("teams")
+  seasons Season[] @relation("seasons")
+}
+
+model Season {
+  id       String  @id @default(uuid())
+  leagueId String?
+  year     String
+  champion String
+  games    Game[]
+  teams    Team[]
+  league   League? @relation("seasons", fields: [leagueId], references: [id])
+}
+
+model Game {
+  id            String   @id @default(uuid())
+  date          DateTime
+  homeTeam      Team     @relation(name: "homeTeam", fields: [homeTeamId], references: [id])
+  awayTeam      Team     @relation(name: "awayTeam", fields: [awayTeamId], references: [id])
+  winner        Team     @relation(name: "winner", fields: [winnerId], references: [id])
+  gameType      String
+  homeTeamScore String
+  awayTeamScore String
+
+  Season     Season? @relation(fields: [seasonId], references: [id])
+  seasonId   String?
+  homeTeamId String
+  awayTeamId String
+  winnerId   String
+  guesses    Guess[]
+}
+
+model FriendLeague {
+  id          String        @id @default(uuid())
+  name        String
+  perfomances Performance[]
+  owner       User          @relation(name: "owner", fields: [ownerId], references: [id])
+  ownerId     String
+  users       User[]
+}
+
+model Performance {
+  id             String       @id @default(uuid())
+  points         Int
+  guesses        Guess[]
+  user           User         @relation(fields: [userId], references: [id])
+  userId         String
+  FriendLeague   FriendLeague @relation(fields: [friendLeagueId], references: [id])
+  friendLeagueId String
+}
+
+model Guess {
+  id              String      @id @default(uuid())
+  game            Game        @relation(fields: [gameId], references: [id])
+  gameId          String
+  scoreboardGuess String
+  winnerGuess     Team        @relation(fields: [winnerGuessId], references: [id])
+  winnerGuessId   String
+  Performance     Performance @relation(fields: [performanceId], references: [id])
+  performanceId   String
 }
