@@ -60,7 +60,6 @@ export const AuthMutation = extendType({
                 const { email, name } = args;
 
                 const password = await bcrypt.hash(args.password, 10);
-
                 const user = await context.prisma.user.create({
                     data: { email, name, password },
                 });
