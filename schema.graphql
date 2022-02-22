@@ -7,17 +7,79 @@ type AuthPayload {
   user: User!
 }
 
+"""
+A date-time string at UTC, such as 2007-12-03T10:15:30Z, compliant with the `date-time` format outlined in section 5.6 of the RFC 3339 profile of the ISO 8601 standard for representation of dates and times using the Gregorian calendar.
+"""
+scalar DateTime
+
+type FriendLeague {
+  id: String!
+  name: String!
+}
+
+type Game {
+  awayTeamScore: String!
+  date: DateTime!
+  gameType: String!
+  homeTeamScore: String!
+  id: String!
+}
+
+type Guess {
+  id: String!
+  scoreboardGuess: String!
+}
+
+type League {
+  id: String!
+  name: String!
+  server: String!
+}
+
 type Mutation {
   login(email: String!, password: String!): AuthPayload!
   signup(email: String!, name: String!, password: String!): AuthPayload!
+}
+
+type Performance {
+  id: String!
+  points: Int!
+}
+
+type Player {
+  Team: Team
+  id: String!
+  name: String!
+  nick: String!
+  role: String!
 }
 
 type Query {
   ok: Boolean!
 }
 
-type User {
-  email: String!
-  id: Int!
+type Season {
+  champion: String!
+  id: String!
+  year: String!
+}
+
+type Team {
+  id: String!
+  league: League
   name: String!
+  players: [Player]
+  season: Season
+  server: String!
+}
+
+type User {
+  createdAt: DateTime!
+  email: String!
+  friendLeagues: [FriendLeague]!
+  friendLeaguesOwned: [FriendLeague]!
+  id: String!
+  name: String!
+  performance: [Performance]!
+  updatedAt: DateTime!
 }

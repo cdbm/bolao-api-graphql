@@ -39,7 +39,7 @@ model Team {
   league   League   @relation(name: "teams", fields: [leagueId], references: [id])
   leagueId String
   players  Player[] @relation("players")
-  Season   Season?  @relation(fields: [seasonId], references: [id])
+  season   Season?  @relation(fields: [seasonId], references: [id])
   seasonId String?
   homeGame Game[]   @relation("homeTeam")
   awayGame Game[]   @relation("awayTeam")
